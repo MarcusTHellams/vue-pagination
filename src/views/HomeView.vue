@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import { api } from '@/common';
-import { Edit } from 'lucide-vue-next';
+import { Edit, Trash2 } from 'lucide-vue-next';
 import {
   Button,
   Layout1,
@@ -26,9 +26,10 @@ import {
   Input,
   Label,
 } from '@/components';
+import { ProductEditModal } from '@/features';
 import { keepPreviousData, useQuery } from '@tanstack/vue-query';
 import { FlexRender, getCoreRowModel, useVueTable, type ColumnDef } from '@tanstack/vue-table';
-import { ref, computed, h } from 'vue';
+import { ref, computed } from 'vue';
 
 // QUERY PRODUCTS
 const page = ref(1);
@@ -128,10 +129,24 @@ const columns: ColumnDef<Product>[] = [
     header: 'Actions',
     cell() {
       return (
-        <div>
+        <div class="flex gap-1">
           {/* @ts-ignore */}
-          <Button onClick={() => console.log('Hello World')} variant={'link'}>
+          <Button
+            class="p-0 text-blue-500"
+            onClick={() => {
+              editDialogOpen.value = !editDialogOpen.value;
+            }}
+            variant={'link'}
+          >
             <Edit />
+          </Button>
+          {/* @ts-ignore */}
+          <Button
+            class="p-0 text-red-500"
+            onClick={() => console.log('Hello World')}
+            variant={'link'}
+          >
+            <Trash2 />
           </Button>
         </div>
       );
@@ -148,6 +163,12 @@ const table = useVueTable({
 });
 
 // END OF TABLE
+
+// EDIT DIALOG
+
+const editDialogOpen = ref(false);
+
+// END EDIT DIALOG
 </script>
 
 <template>
@@ -232,7 +253,7 @@ const table = useVueTable({
           <SelectTrigger class="w-1/4">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent position="popper" side="top">
             <SelectItem v-for="num in [5, 10, 15, 20, 100]" :key="num" :value="`${num}`">
               {{ num }}
             </SelectItem>
@@ -241,4 +262,5 @@ const table = useVueTable({
       </div>
     </Layout1>
   </main>
+  <ProductEditModal :open="editDialogOpen" />
 </template>
